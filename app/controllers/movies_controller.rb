@@ -10,7 +10,7 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.all_ratings
     @ratings_to_show = params[:ratings]&.keys || @all_ratings
     @ratings_hash = @ratings_to_show.map { |r| [r, '1'] }.to_h
-    @sort_by = params[:sort_by].presence_in(%w[title release_date])
+    @sort_by = params[:sort_by].presence_in(%w[title release_date]) || 'title'
 
 
     @movies = Movie.where(rating: @ratings_to_show)
