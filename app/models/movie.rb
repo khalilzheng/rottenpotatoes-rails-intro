@@ -1,5 +1,5 @@
 class Movie < ActiveRecord::Base
   def self.all_ratings
-    %w[G PG PG-13 R]
+    %w[G PG PG-13 R].freeze
   end
 end

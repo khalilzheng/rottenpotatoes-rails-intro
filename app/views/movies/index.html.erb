@@ -8,9 +8,22 @@
       <%= check_box_tag "ratings[#{rating}]", "1", @ratings_to_show.include?(rating), id: "ratings_#{rating}", class: "form-check-input" %>
     <%= label_tag "ratings_#{rating}", rating, class: "form-check-label" %>
   </div>
-  <% end %>
-  <%=submit_tag 'Refresh', id: 'ratings_submit', class: 'btn btn-primary' %>
+
+  
 <% end %>                        
+
+  <div class="mt-2">
+    <label class="form-label me-2" for="sort_by">Sort by:</label>
+    <%= select_tag :sort_by,
+          options_for_select([["Title","title"], ["Release date","release_date"]], @sort_by),
+          id: "sort_by", 
+          class: "form-select d-inline w-auto" %>
+  </div>
+
+
+
+  <%= submit_tag 'Refresh', id: 'ratings_submit', class: 'btn btn-primary mt-2' %>
+<% end %>
 
 
 
