@@ -1,12 +1,17 @@
 # Add a declarative step here for populating the DB with movies.
 
-Given(/the following movies exist/) do |movies_table|
-  movies_table.hashes.each do |movie|
-    # each returned element will be a hash whose key is the table header.
-    # you should arrange to add that movie to the database here.
+Given(/^the following movies exist:$/) do |movies_table|
+    Movie.delete_all
+    movies_table.hashes.each do |movie|
+      # each returned element will be a hash whose key is the table header.
+      # you should arrange to add that movie to the database here.
+      Movie.create!(
+        title: movie['title'],
+        rating: movie['rating'],
+        release_date: movie['release_date']
+      )
+    end
   end
-  pending "Fill in this step in movie_steps.rb"
-end
 
 Then(/(.*) seed movies should exist/) do |n_seeds|
   expect(Movie.count).to eq n_seeds.to_i
@@ -18,28 +23,47 @@ end
 Then(/^I should see "(.*)" before "(.*)" in the movie list$/) do |e1, e2|
   #  ensure that that e1 occurs before e2.
   #  page.body is the entire content of the page as a string.
-  pending "Fill in this step in movie_steps.rb"
+  body = page.body
+  a = body.index(e1)
+  b = body.index(e2)
+  expect(a).not_to be_nil, %Q("#{e1}" not found on page)
+  expect(b).not_to be_nil, %Q("#{e2}" not found on page)
+  expect(a).to be < b
 end
 
 
 # Make it easier to express checking or unchecking several boxes at once
 #  "When I check only the following ratings: PG, G, R"
 
-When(/I check the following ratings: (.*)/) do |rating_list|
+When(/I check the following ratings: (.*)/) do |list|
   # HINT: use String#split to split up the rating_list, then
   #   iterate over the ratings and reuse the "When I check..." or
   #   "When I uncheck..." steps in lines 89-95 of web_steps.rb
-  pending "Fill in this step in movie_steps.rb"
+  list.split(/\s*,\s*/).each { |r| check("ratings_#{r}") }
+end
+
+When(/I uncheck the following ratings: (.*)/) do |list|
+  list.split(/\s*,\s*/).each { |r| uncheck("ratings_#{r}") }
 end
 
 Then(/^I should (not )?see the following movies: (.*)$/) do |no, movie_list|
   # Take a look at web_steps.rb Then /^(?:|I )should see "([^"]*)"$/
-  pending "Fill in this step in movie_steps.rb"
+  movie_list.split(/\s*,\s*/).each do |title|
+    if no
+      expect(page).not_to have_content(title)
+    else
+      expect(page).to have_content(title)
+    end
+  end  
 end
 
 Then(/^I should see all the movies$/) do
   # Make sure that all the movies in the app are visible in the table
-  pending "Fill in this step in movie_steps.rb"
+  if page.has_css?('table#movies tbody tr')
+    expect(page).to have_css('table#movies tbody tr', count: Movie.count)
+  else
+    Movie.pluck(:title).each { |t| expect(page).to have_content(t) }
+  end    
 end
 
 ### Utility Steps Just for this assignment.
